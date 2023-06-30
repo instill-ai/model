@@ -130,3 +130,5 @@ jobs:
           owner=$(cut -d '/' -f 1 <<< '${{ env.HELM_CHART_REPO }}')
           repo=$(cut -d '/' -f 2 <<< '${{ env.HELM_CHART_REPO }}')
           cr upload --git-repo "$repo" --owner "$owner" --token '${{ secrets.botGitHubToken }}' --package-path '../${{ steps.package.outputs.dir }}' --make-release-latest false
+
+          
