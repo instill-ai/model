@@ -1,6 +1,10 @@
 name: Integration Test Reusable (backend)
 
 on:
+  workflow_dispatch:
+  push:
+    branches:
+      - ins-1105-fix-the-the-integration-test-cicd-in-all-projects  
   workflow_call:
     inputs:
       component:
@@ -27,7 +31,6 @@ jobs:
       # mono occupies port 8084 which conflicts with mgmt-backend
       - name: Stop mono service
         run: |
-          sudo kill -9 `sudo lsof -t -i:8084`
           sudo lsof -i -P -n | grep LISTEN
 
       - name: Install k6
@@ -42,7 +45,7 @@ jobs:
           rm --recursive --force "$AGENT_TOOLSDIRECTORY"
           df --human-readable
 
-      - name: Launch Instill Base (latest)
+      - name: Launch Instill Model (latest)
         if: inputs.target == 'latest'
         run: |
           COMPOSE_PROFILES=all \
@@ -57,7 +60,7 @@ jobs:
         run: |
           git clone https://github.com/instill-ai/${{ inputs.component }}.git
           cd ${{ inputs.component }}
-          make integration-test API_GATEWAY_HOST=localhost API_GATEWAY_PORT=9080
+          make integration-test API_GATEWAY_HOST=localhost API_GATEWAY_PORT=${API_GATEWAY_MODEL_PORT}
 
       - name: Uppercase component name
         if: inputs.target == 'release'
@@ -65,10 +68,11 @@ jobs:
         run: |
           echo "COMPONENT_NAME=$(echo ${{ inputs.component }} | tr 'a-z-' 'A-Z_')" >> $GITHUB_OUTPUT
 
-      - name: Launch Instill Base (release)
+      - name: Launch Instill Model (release)
         if: inputs.target == 'release'
         run: |
           EDITION=local-ce:test \
+          TRITON_CONDA_ENV_PLATFORM=cpu \
           docker compose up -d --quiet-pull
           EDITION=local-ce:test \
           docker compose rm -f
@@ -80,4 +84,4 @@ jobs:
         run: |
           git clone -b v$COMPONENT_VERSION https://github.com/instill-ai/${{ inputs.component }}.git
           cd ${{ inputs.component }}
-          make integration-test API_GATEWAY_HOST=localhost API_GATEWAY_PORT=9080
+          make integration-test API_GATEWAY_HOST=localhost API_GATEWAY_PORT=${API_GATEWAY_MODEL_PORT}

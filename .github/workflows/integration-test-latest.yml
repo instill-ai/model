@@ -11,12 +11,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        component: [mgmt-backend]
-    uses: instill-ai/model/.github/workflows/integration-test-backend.yml@main
+        component: [model-backend, controller-model]
+    uses: instill-ai/model/.github/workflows/integration-test-backend.yml@ins-1105-fix-the-the-integration-test-cicd-in-all-projects  
     with:
       component: ${{ matrix.component }}
       target: latest
   console:
-    uses: instill-ai/model/.github/workflows/integration-test-console.yml@main
+    uses: instill-ai/model/.github/workflows/integration-test-console.yml@ins-1105-fix-the-the-integration-test-cicd-in-all-projects  
     with:
       target: latest
