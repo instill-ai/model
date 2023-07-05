@@ -31,6 +31,7 @@ jobs:
       # mono occupies port 8084 which conflicts with mgmt-backend
       - name: Stop mono service
         run: |
+          sudo kill -9 `sudo lsof -t -i:8084`
           sudo lsof -i -P -n | grep LISTEN
 
       - name: Install k6
@@ -44,6 +45,19 @@ jobs:
           docker rmi $(docker image ls --all --quiet)
           rm --recursive --force "$AGENT_TOOLSDIRECTORY"
           df --human-readable
+
+
+      - name: Launch Instill Base (latest)
+        if: inputs.target == 'latest'
+        run: |
+          git clone https://github.com/instill-ai/base.git
+          cd base
+          COMPOSE_PROFILES=all \
+          EDITION=local-ce:test \
+          docker compose -f docker-compose.yml -f docker-compose.latest.yml up -d --quiet-pull
+          COMPOSE_PROFILES=all \
+          EDITION=local-ce:test \
+          docker compose -f docker-compose.yml -f docker-compose.latest.yml rm -f    
 
       - name: Launch Instill Model (latest)
         if: inputs.target == 'latest'
@@ -61,7 +75,7 @@ jobs:
         run: |
           git clone https://github.com/instill-ai/${{ inputs.component }}.git
           cd ${{ inputs.component }}
-          make integration-test API_GATEWAY_HOST=localhost API_GATEWAY_PORT=${API_GATEWAY_MODEL_PORT}
+          make integration-test API_GATEWAY_MODEL_HOST=localhost API_GATEWAY_MODEL_PORT=${API_GATEWAY_MODEL_PORT}
 
       - name: Uppercase component name
         if: inputs.target == 'release'
@@ -85,4 +99,4 @@ jobs:
         run: |
           git clone -b v$COMPONENT_VERSION https://github.com/instill-ai/${{ inputs.component }}.git
           cd ${{ inputs.component }}
-          make integration-test API_GATEWAY_HOST=localhost API_GATEWAY_PORT=${API_GATEWAY_MODEL_PORT}
+          make integration-test API_GATEWAY_MODEL_HOST=localhost API_GATEWAY_MODEL_PORT=${API_GATEWAY_MODEL_PORT}
