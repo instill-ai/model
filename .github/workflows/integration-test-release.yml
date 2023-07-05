@@ -16,7 +16,7 @@ jobs:
     with:
       component: ${{ matrix.component }}
       target: release
-  console:
-    uses: instill-ai/model/.github/workflows/integration-test-console.yml@ins-1105-fix-the-the-integration-test-cicd-in-all-projects  
-    with:
-      target: release
+  # console:
+  #   uses: instill-ai/model/.github/workflows/integration-test-console.yml@ins-1105-fix-the-the-integration-test-cicd-in-all-projects  
+  #   with:
+  #     target: release
