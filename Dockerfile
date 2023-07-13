@@ -54,8 +54,8 @@ RUN git clone https://github.com/instill-ai/base.git
 WORKDIR /instill-ai/model
 
 RUN git clone https://github.com/instill-ai/api-gateway.git
-RUN git clone https://github.com/instill-ai/model-backend.git
-RUN git clone https://github.com/instill-ai/controller-model.git
+RUN git clone -b heiru/ins-1282-mode-init-script-will-only-populate-pre-deploy-models-in https://github.com/instill-ai/model-backend.git
+RUN git clone -b heiru/ins-1283-controller-model-will-push-current-state-to-desire-state-for https://github.com/instill-ai/controller-model.git
 
 FROM ubuntu:${UBUNTU_VERSION} AS release
 
