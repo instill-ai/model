@@ -96,7 +96,7 @@ services:
     image: ${MODEL_BACKEND_IMAGE}:latest
     environment:
       CFG_INITMODEL_ENABLED: ${INITMODEL_ENABLED}
-      CFG_INITMODEL_PATH: https://raw.githubusercontent.com/instill-ai/vdp/main/model-hub/model_hub_cpu.json
+      CFG_INITMODEL_PATH: https://gist.githubusercontent.com/heiruwu/f26800a92a9a73b051329fcaaebf3af0/raw/beb53bad610178f859f5ba285f25b2bd44bfa9d9/test_model_cpu_list.json
 
   controller_model:
     profiles:
